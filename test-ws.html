@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Teste WebSocket de Controle do Editor</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      line-height: 1.5;
+    }
+    button {
+      padding: 8px 12px;
+      margin: 5px;
+      cursor: pointer;
+    }
+    pre {
+      background-color: #f4f4f4;
+      padding: 10px;
+      border-radius: 4px;
+      overflow: auto;
+      max-height: 400px;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Teste WebSocket de Controle do Editor</h1>
+    <div>
+      <button id="connect">Conectar</button>
+      <button id="disconnect" disabled>Desconectar</button>
+      <button id="getInfo" disabled>Obter Informações da Instância</button>
+      <button id="toggleDevTools" disabled>Alternar DevTools</button>
+    </div>
+    <h3>Log de Mensagens</h3>
+    <pre id="output"></pre>
+  </div>
+
+  <script>
+    let ws = null;
+    const output = document.getElementById('output');
+    
+    function log(message) {
+      const timestamp = new Date().toLocaleTimeString();
+      output.textContent = `[${timestamp}] ${message}\n` + output.textContent;
+    }
+    
+    document.getElementById('connect').addEventListener('click', () => {
+      ws = new WebSocket('ws://localhost:3001');
+      
+      ws.onopen = () => {
+        log('Conectado ao servidor WebSocket');
+        document.getElementById('connect').disabled = true;
+        document.getElementById('disconnect').disabled = false;
+        document.getElementById('getInfo').disabled = false;
+        document.getElementById('toggleDevTools').disabled = false;
+      };
+      
+      ws.onmessage = (event) => {
+        log(`Recebido: ${event.data}`);
+      };
+      
+      ws.onclose = () => {
+        log('Desconectado do servidor WebSocket');
+        document.getElementById('connect').disabled = false;
+        document.getElementById('disconnect').disabled = true;
+        document.getElementById('getInfo').disabled = true;
+        document.getElementById('toggleDevTools').disabled = true;
+      };
+      
+      ws.onerror = (error) => {
+        log(`Erro WebSocket: ${error}`);
+      };
+    });
+    
+    document.getElementById('disconnect').addEventListener('click', () => {
+      if (ws) {
+        ws.close();
+        ws = null;
+      }
+    });
+    
+    document.getElementById('getInfo').addEventListener('click', () => {
+      if (ws) {
+        ws.send(JSON.stringify({ type: 'get_instance_info' }));
+        log('Enviado: { type: "get_instance_info" }');
+      }
+    });
+    
+    document.getElementById('toggleDevTools').addEventListener('click', () => {
+      if (ws) {
+        ws.send(JSON.stringify({ type: 'toggle_devtools' }));
+        log('Enviado: { type: "toggle_devtools" }');
+      }
+    });
+  </script>
+</body>
+</html>
