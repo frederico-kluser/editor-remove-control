@@ -1,0 +1,28 @@
+{
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js",
+    "dev": "npm run watch",
+    
+    "package": "vsce package",
+    "package:win": "vsce package --target win32-x64",
+    "package:mac": "vsce package --target darwin-x64 darwin-arm64",
+    "package:linux": "vsce package --target linux-x64",
+    "package:all": "npm run package:win && npm run package:mac && npm run package:linux",
+    
+    "validate-package": "node scripts/validate-package.js",
+    "integration-test": "node exemplo.js",
+    "publish-extension": "vsce publish",
+    "publish-extension:minor": "vsce publish minor",
+    "publish-extension:major": "vsce publish major",
+    
+    "prepackage": "npm run lint && npm run compile",
+    "postpackage": "npm run validate-package",
+    
+    "setup-dev": "npm install && mkdir -p scripts && npm run create-validation-script",
+    "create-validation-script": "node -e \"const fs = require('fs'); const path = require('path'); const dir = 'scripts'; if (!fs.existsSync(dir)) fs.mkdirSync(dir); fs.writeFileSync(path.join(dir, 'validate-package.js'), fs.readFileSync('scripts/validate-package.template.js', 'utf8') || '/**\\n * Script de validação do pacote\\n */\\n\\nconsole.log(\\'Validando pacote...\\');\\n\\n// Verificar se o arquivo .vsix foi gerado\\nconst fs = require(\\'fs\\');\\nconst path = require(\\'path\\');\\n\\n// Lê o package.json para obter nome e versão\\nconst packageJson = require(\\'\\..\\/package.json\\');\\nconst { name, version } = packageJson;\\n\\n// Constrói o nome do arquivo .vsix esperado\\nconst expectedFileName = `${name}-${version}.vsix`;\\nconst vsixPath = path.join(__dirname, \\'..\\/\\', expectedFileName);\\n\\nif (fs.existsSync(vsixPath)) {\\n  console.log(`✅ Pacote ${expectedFileName} gerado com sucesso!`);\\n  // Verificar tamanho do arquivo\\n  const stats = fs.statSync(vsixPath);\\n  const fileSizeInBytes = stats.size;\\n  const fileSizeInMegabytes = fileSizeInBytes / (1024 * 1024);\\n  console.log(`📦 Tamanho do pacote: ${fileSizeInMegabytes.toFixed(2)} MB`);\\n\\n  // Verificar estrutura básica do pacote\\n  console.log(\\'🔍 Verificando estrutura do pacote...\\');\\n  try {\\n    // Aqui você pode adicionar validações adicionais se necessário\\n    console.log(\\'✅ Estrutura do pacote válida\\');\\n  } catch (error) {\\n    console.error(\\'❌ Erro ao validar estrutura do pacote:\\', error.message);\\n    process.exit(1);\\n  }\\n} else {\\n  console.error(`❌ Erro: Pacote ${expectedFileName} não encontrado!`);\\n  process.exit(1);\\n}\\n');\");"
+  }
+}

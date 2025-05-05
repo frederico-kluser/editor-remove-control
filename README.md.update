@@ -1,0 +1,125 @@
+## Empacotamento da Extensão
+
+Para distribuir a extensão, você precisa empacotá-la em um arquivo `.vsix` que pode ser instalado em diferentes editores baseados em VSCode.
+
+### Pré-requisitos para Empacotamento
+
+- Node.js (v16.x ou posterior)
+- npm (v8.x ou posterior)
+- Visual Studio Code Extension Manager (vsce) - instale usando `npm install -g @vscode/vsce`
+
+### Empacotamento para Diferentes Ambientes
+
+#### Para todos os ambientes (Cross-platform)
+
+```bash
+# Instale as dependências do projeto
+npm install
+
+# Compile o projeto
+npm run compile
+
+# Crie o pacote .vsix
+vsce package
+```
+
+Isso gerará um arquivo `.vsix` na raiz do projeto que pode ser instalado em qualquer plataforma.
+
+#### Específico para Windows
+
+No Windows, você pode usar o PowerShell para empacotar a extensão:
+
+```powershell
+# Instale as dependências
+npm install
+
+# Compile o projeto
+npm run compile
+
+# Crie o pacote .vsix
+vsce package
+```
+
+#### Específico para macOS
+
+No macOS, você pode usar o Terminal:
+
+```bash
+# Instale as dependências
+npm install
+
+# Compile o projeto
+npm run compile
+
+# Crie o pacote .vsix
+vsce package
+```
+
+#### Específico para Linux
+
+No Linux, use o terminal:
+
+```bash
+# Instale as dependências
+npm install
+
+# Compile o projeto
+npm run compile
+
+# Crie o pacote .vsix
+vsce package
+```
+
+### Validando o Pacote
+
+Após gerar o arquivo `.vsix`, você pode verificar se ele está funcionando corretamente:
+
+1. Abra o VS Code
+2. Vá para a visualização de Extensões (Ctrl+Shift+X)
+3. Clique no menu "..." no canto superior direito
+4. Selecione "Instalar a partir do VSIX..."
+5. Navegue até e selecione o arquivo `.vsix` gerado
+6. Reinicie o VS Code quando solicitado
+
+Você também pode validar o pacote usando o script:
+
+```bash
+npm run validate-package
+```
+
+### Publicação na Marketplace do VS Code
+
+Para publicar sua extensão na Marketplace do VS Code:
+
+1. Crie uma conta na [Visual Studio Marketplace](https://marketplace.visualstudio.com/manage)
+2. Obtenha um token de acesso pessoal
+3. Execute o comando:
+
+```bash
+vsce publish -p <seu-token-de-acesso>
+```
+
+Alternativamente, você pode usar o script do package.json:
+
+```bash
+npm run publish-extension
+```
+
+### Resolução de Problemas de Empacotamento
+
+Se encontrar problemas durante o empacotamento da extensão:
+
+1. Verifique se todas as dependências estão instaladas:
+   ```bash
+   npm ci
+   ```
+
+2. Limpe a pasta de saída e recompile:
+   ```bash
+   rm -rf out
+   npm run compile
+   ```
+
+3. Verifique se todas as configurações necessárias estão presentes no arquivo `package.json`
+
+4. Para problemas específicos de plataforma, consulte a [documentação oficial do vsce](https://code.visualstudio.com/api/working-with-extensions/publishing-extension)
